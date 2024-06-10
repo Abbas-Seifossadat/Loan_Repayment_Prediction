@@ -6,6 +6,16 @@ import joblib
 from tensorflow.keras.models import load_model
 from sklearn.preprocessing import StandardScaler
 import time
+import plotly.graph_objs as go
+import matplotlib.pyplot as plt
+from plotly.subplots import make_subplots
+import seaborn as sns
+
+# read data
+data = pd.read_csv('loan_data.csv') 
+data['credit.policy'] = data['credit.policy'].map({1: 'Yes', 0: 'No'})
+data['not.fully.paid'] = data['not.fully.paid'].map({1: 'Yes', 0: 'No'})
+categorical_cols = data.select_dtypes(include=['object']).columns
 
 # Set page configuration
 st.set_page_config(
@@ -88,6 +98,45 @@ def get_input_data():
 
     return input_data
 
+def plot_cat_dist(categorical_cols, data):
+    fig = make_subplots(rows=1, cols=3, subplot_titles=[f'Distribution of {col}' for col in categorical_cols])
+
+    for i, col in enumerate(categorical_cols):
+        counts = data[col].value_counts()
+        fig.add_trace(go.Bar(x=counts.index, y=counts.values, marker_color=counts.values, marker_colorscale='viridis'), row=1, col=i+1)
+        fig.update_xaxes(title_text=col, row=1, col=i+1)
+        fig.update_yaxes(title_text='Count', row=1, col=i+1)
+
+    # Update layout
+    fig.update_layout(height=500, width=1000, showlegend=False)
+
+    return fig
+
+    # Update layout
+    fig.update_layout(height=500, width=1000, showlegend=False)
+
+    # Display the plots in Streamlit
+    st.plotly_chart(fig)
+
+
+def plot_num_dist(data):
+    # Create subplots with 4 rows and 3 columns
+    fig = make_subplots(rows=4, cols=3, subplot_titles=data.select_dtypes(include='number').columns)
+
+    # Iterate through numerical columns and add a histogram for each
+    for index, col in enumerate(data.select_dtypes(include='number').columns):
+        row = index // 3 + 1
+        col_pos = index % 3 + 1
+        fig.add_trace(go.Histogram(x=data[col]), row=row, col=col_pos)
+        fig.update_xaxes(title_text=col, row=row, col=col_pos)
+
+    # Update layout
+    fig.update_layout(height=1000, width=1200)
+
+    # Display plot in Streamlit
+    st.plotly_chart(fig)
+
+
 def show_introduction():
     st.title("Loan Repayment Prediction 💰")
     st.image('Loan.jpg')
@@ -98,8 +147,10 @@ def show_introduction():
     In this project, we try to utilize the best preprocessing techniques, we clean and prepare the data to enhance model performance.
     """)
     st.header("Source Dataset 📝")
+    if st.checkbox("Show Data"):
+        st.dataframe(data)
     st.markdown("[Loan Data](https://www.kaggle.com/datasets/itssuru/loan-data)")
-    st.header("Data Description 📊")
+    st.header("Data Overview 📊")
     st.markdown("""
     The dataset used in this project was obtained from Lending Club and comprises the following attributes from loan_data.csv:
     1. **credit.policy**: A binary variable indicating whether the customer meets LendingClub.com's credit underwriting criteria (1 for meeting the criteria, 0 otherwise).
@@ -117,6 +168,21 @@ def show_introduction():
     13. **pub.rec**: The number of derogatory public records, including bankruptcy filings, tax liens, or judgments.
     14. **not.fully.paid**: The dependent variable, where "0" indicates that the loan was fully paid by borrowers, and "1" indicates that it was not fully paid.
     """)
+    st.write("**Summary statistics for numerical features:**")
+    st.write(data.describe())
+    st.write("**Summary statistics for categorical features:**")
+    st.write(data.describe(include="O"))
+    st.write("**Unique values in each column:**")
+    st.write(data.nunique())
+
+    st.write("**Distribution of categorical columns:**")
+    # Call the function to get the figure
+    fig = plot_cat_dist(categorical_cols, data)
+    # Display the plot in Streamlit
+    st.plotly_chart(fig)
+
+    st.write("**Distribution of numerical columns:**")
+    plot_num_dist(data)
 
 def show_prediction_phase():
     st.title("Loan Repayment Prediction 💰")
@@ -170,7 +236,7 @@ def show_prediction_phase():
 
 def main():
     st.sidebar.title("Navigation")
-    option = st.sidebar.selectbox("Select Phase", ["Introduction", "Prediction Phase"])
+    option = st.sidebar.radio("Select Phase", ["Introduction", "Prediction Phase"])
     
     st.sidebar.markdown("""
     Please refer to Kaggle profiles for each team member:
@@ -191,7 +257,7 @@ def main():
     st.sidebar.markdown(
         """
         <div style="text-align:center;">
-            <a href="https://github.com/Abbas-Seifossadat/Fanap_Filoger/tree/main/Ex08">
+            <a href="https://github.com/Abbas-Seifossadat/Loan_Repayment_Prediction/tree/main">
                 <img src="https://img.icons8.com/ios-filled/25/000000/github.png" alt="GitHub"/>
             </a>
         </div>
