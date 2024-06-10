@@ -1,4 +1,4 @@
-# Loan Repayment Prediction ??
+# Loan Repayment Prediction
 
 This project leverages deep neural networks to predict the probability of borrowers successfully repaying their loans. Accurate loan repayment predictions are crucial for financial institutions to make informed lending decisions, reduce risks, and promote responsible lending practices.
 
