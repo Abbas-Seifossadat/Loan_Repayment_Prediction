@@ -8,12 +8,14 @@ This project leverages deep neural networks to predict the probability of borrow
 ## Project Overview
 
 - **Objective**: Predict whether a loan will be fully paid or not using various borrower attributes.
-- **Dataset**: The dataset used is from Lending Club, which includes features like credit policy, interest rate, annual income, and more.
+- **Dataset**: The dataset used is from Lending Club via [Kaggle](https://www.kaggle.com/datasets/itssuru/loan-data), which includes features like credit policy, interest rate, annual income, and more.
 
 ## Features
 
 - **User Interface**: Developed using Streamlit for easy interaction.
+- **Data Visualization**: Visualizations of categorical and numerical data distributions to understand the dataset better.
 - **Model**: A pre-trained deep neural network model.
+- **Interactive Elements**: Sliders and tooltips to guide users in providing input data.
 - **Data Processing**: Handles outliers and scales numerical features.
 - **Prediction**: Provides a probability of loan repayment along with a success/failure indication.
 
@@ -41,11 +43,12 @@ This project leverages deep neural networks to predict the probability of borrow
 
 ## Files
 
-- `app.py`: Main application file.
+- `streamlit_app.py`: Main application file.
 - `model_option_1.h5`: Pre-trained model.
 - `bounds.json`: JSON file containing bounds for outlier handling.
 - `scaler.pkl`: Pre-trained scaler for numerical features.
 - `requirements.txt`: List of required Python packages.
+
 
 ## Team Members
 
